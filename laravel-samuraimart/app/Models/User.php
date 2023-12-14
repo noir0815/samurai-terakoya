@@ -10,11 +10,17 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\CustomVerifyEmail;
 use App\Notifications\CustomResetPassword;
+use Overtrue\LaravelFavorite\Traits\Favoriter;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+
 
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Favoriter, SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     public function sendEmailVerificationNotification()
     {
@@ -33,6 +39,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'postal_code',
+        'address',
+        'phone'
     ];
 
     /**
@@ -53,4 +62,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
